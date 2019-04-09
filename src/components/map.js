@@ -147,7 +147,7 @@ export default class Map extends Component {
         tooltip.html("<p>" + d.properties.name2 + ": " + formatter.format(amountAllocated[i].value) + "</p>")
           .style("opacity", "1.0")
           .style("left", d3.event.pageX - bounds.width/2 +"px")
-          .style("top", d3.event.pageY + "px");
+          .style("bottom", bounds.height/2 - d3.event.pageY + 400 + "px");
       })
       .on("mouseout", function(d, i) {
         if (selectedIndex !== -1 && selectedIndex !== i) {
@@ -226,7 +226,7 @@ export default class Map extends Component {
         )
           .style("opacity", "1.0")
           .style("left", d3.event.pageX - bounds.width/2 +"px")
-          .style("top", d3.event.pageY + "px");
+          .style("bottom", bounds.height/2 - d3.event.pageY + 300 + "px");
       });
   }
   
