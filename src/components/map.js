@@ -7,8 +7,9 @@ import Timeline from './timeline.js';
 import Legend from './legend.js';
 import HorizontalBarChart from './horizontal_bar_chart.js'
 
-const MAXZOOM = 15;
 const MINZOOM = 13;
+const DISTZOOM = MINZOOM + 1;
+const MAXZOOM = DISTZOOM + 1;
 const STARTLOC = [44.94, -93.10];
 const FLYDURATION = 0.6;
 const NUMDISTRICTS = 17;
@@ -91,8 +92,7 @@ export default class Map extends Component {
 
   updatePointPositions() {
     let osmMap = this.osmMap;
-    let g = d3.select("#osm-map").select('g');
-    g.selectAll(".map-point, .ping-marker")
+    d3.selectAll(".map-point, .ping-marker")
       .attr("cx", (d, i) =>
             osmMap.latLngToLayerPoint({lat: d.latitude, lon: d.longitude}).x)
       .attr("cy", (d, i) =>
@@ -123,20 +123,37 @@ export default class Map extends Component {
           d3.scaleLinear().domain(min_max)
           .range(colors);
 
-    d3.selectAll("#osm-map path")
-      .on("click", function (d, i) {
-        that.setState({ portion: d, projection:projection });
-        that.selectMap(d, projection, that.props.years);
-        d3.select("body").on("keydown", function() {
-          if (d3.event.key === "Escape") {
-            d3.select(".infobox")
-              .classed("infobox-hidden", true);
-            that.unSelectMap();
-            that.setState({ portion: undefined, projection:undefined});
-            that.clearYearSelection();
-          }
-        });
-      })
+    let drag = d3.drag();
+    let pieces = d3.selectAll("#osm-map path");
+    drag.on("end", function() {
+      d3.event.sourceEvent.preventDefault();
+    });
+    pieces.call(drag);
+
+    pieces.on("click", function (d, i) {
+      if (d3.event.defaultPrevented) {
+        return;
+      }
+
+      that.setState({ portion: d, projection:projection });
+      that.selectMap(d, projection, that.props.years);
+
+      d3.select("body").on("keydown", function() {
+        if (d3.event.key === "Escape") {
+          d3.select(".infobox")
+            .classed("infobox-hidden", true);
+          that.unSelectMap();
+          that.setState({ portion: undefined, projection:undefined});
+          that.clearYearSelection();
+          d3.select("body").on("keydown", null);
+        }
+      });
+
+      let bds = this.getBoundingClientRect();
+      let origin = that.osmMap.getPixelOrigin();
+      let zoomcenter = that.osmMap.layerPointToLatLng([bds.x + bds.width / 2, bds.y + bds.height / 2]);
+      that.osmMap.flyTo(zoomcenter, DISTZOOM, {duration: FLYDURATION});
+    })
       .attr('fill', function (d, i) {
         let amt = amountAllocated[i];
         return colorScale(amt !== undefined ? amt.value : 0);
@@ -161,12 +178,16 @@ export default class Map extends Component {
     });
 
     let osmMap = this.osmMap;
-    const create_ping = function(elem, d, i) {
+    const create_ping = function(d, i) {
       /* TODO: this should only work if selected through the map, not
        * from the list. */
-      let ping_pos = osmMap.latLngToLayerPoint({lat: d.latitude, lon: d.longitude});
+      const ping_pos = osmMap.latLngToLayerPoint({lat: d.latitude, lon: d.longitude});
+      const ping_duration = "1s";
+      const radius = 80;
+      const begin = "0s";
+
       d3.selectAll(".ping-marker").remove();
-      let ping = d3.select(elem.parentNode)
+      let ping = d3.select("#osm-map svg")
           .selectAll(".ping-marker")
           .data([d]).enter()
           .append("circle");
@@ -180,26 +201,26 @@ export default class Map extends Component {
 
       ping.append("animate")
         .attr("attributeName", "r")
-        .attr("begin", "0s")
-        .attr("dur", "1s")
+        .attr("begin", begin)
+        .attr("dur", ping_duration)
         .attr("repeatCount", "indefinite")
-        .attr("values", "0; 100")
+        .attr("values", "0; " + radius)
         .attr("keySplines", "0.165 0.84 0.44 1")
         .attr("keyTimes", "0; 1")
         .attr("calcMode", "spline");
 
       ping.append("animate")
         .attr("attributeName", "opacity")
-        .attr("begin", "0s")
-        .attr("dur", "1s")
+        .attr("begin", begin)
+        .attr("dur", ping_duration)
         .attr("repeatCount", "indefinite")
         .attr("values", "1; 0");
     }
 
     const selectPoint = function (d, i) {
-      infobox.html("<h2>" + d.title + "</h2>" +
-                   "<p> Department: " + d.department + "</p>" +
-                   "<p> Amount: " + formatter.format(d.amount) + "</p>" +
+      infobox.html("<span class=\"infobox-amount\">" + formatter.format(d.amount) + "</span>" +
+                   "<span class=\"infobox-dept\">"+ d.department + "</span>" +
+                   "<h2>" + d.title + "</h2>" +
                    "<p> District: " + d.district + "</p>" +
                    "<p> Year: " + d.year + "</p>" +
                    "<p> Location: " + d.location + "</p>" +
@@ -207,7 +228,7 @@ export default class Map extends Component {
         .classed("infobox-hidden", false);
       osmMap.flyTo([d.latitude, d.longitude], MAXZOOM,
                    {animate: true, duration: FLYDURATION});
-      create_ping(this, d, i);
+      create_ping(d, i);
     };
 
     const years = this.parseYearData(year);

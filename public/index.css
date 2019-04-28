@@ -175,8 +175,18 @@ div .cholorpleth {
 }
 
 .infobox h2 {
+    margin-left: 0;
     margin-bottom: 20px;
     font-size: 1.5em;
+}
+
+.infobox .infobox-amount, .infobox .infobox-dept {
+    display: inline;
+    font-size: 0.75em;
+}
+
+.infobox .infobox-amount {
+    float: right;
 }
 
 .hud-ui {
