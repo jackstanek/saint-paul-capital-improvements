@@ -20,9 +20,9 @@ export default class HorizontalBarChart extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (this.exists(this.props.data) && this.props.data.length !== 0) {
-      if (prevProps.data !== this.props.data || prevProps.years !== this.props.years) {
+      if (prevProps.data !== this.props.data || prevProps.years !== this.props.years || this.props.district !== prevProps.district) {
         this.destroyGraph();
-        this.createGraph();
+        this.createGraph(this.props.district);
       }
     }  
   }
@@ -85,15 +85,26 @@ export default class HorizontalBarChart extends Component {
     }
       const years = this.parseYearData(this.props.years);
       const financialData = (years !== undefined) ? years : this.props.data;
+
       for (let i = 0; i < financialData.length; i++) {
         let department = deparmentKey[financialData[i].department];
-
         if (department !== undefined && department !== null) {
             if (!isNaN(parseInt(financialData[i].amount))) {
-                deparmentAmount[department].value += parseInt(financialData[i].amount);
+              if (this.props.district !== undefined) {
+                const district = parseInt(this.props.district);
+                let districts = financialData[i].district.split(",");
+                for (let c = 0; c < districts.length;  c++) {
+                  let index = parseInt(districts[c].trim());
+                  if (index === district) {
+                    deparmentAmount[department].value += parseInt(financialData[i].amount)/districts.length;
+                  }
+                }
+              } else {
+                  deparmentAmount[department].value += parseInt(financialData[i].amount);
+              }
             }
+          }
         }
-      }
 
       deparmentAmount.sort(function(x,y){
         return d3.descending(x.value, y.value);
@@ -102,13 +113,13 @@ export default class HorizontalBarChart extends Component {
       return deparmentAmount;
   }
 
-  createGraph() {
+  createGraph(district) {
     const svg = d3.select("." + this.props.name + " svg");
     const width = this.props.width;
     const height = this.props.height;
     const margin = 30;
 
-    const departmentSum = this.parseSum(this.props.years);
+    const departmentSum = this.parseSum(this.props.years, district);
     const departments = departmentSum.map(function(d) {
         return d.name;
     });
@@ -126,7 +137,7 @@ export default class HorizontalBarChart extends Component {
 
     const colorScale = d3.scaleOrdinal()
       .domain(['Public Works', 'Parks and Recreation', 'Planning and Economic Development', 'Police', 'Fire & Safety Services', 'Library', 'General Government', 'Safety and Inspections', 'Financial Services', 'Office of Technology', 'Public Art'])
-      .range(['#a6cee3', '#b2df8a', '#33a02c', '#1f78b4', '#e31a1c', '#fdbf6f']);
+      .range(['#686c5e', '#b2df8a', '#33a02c', '#1f78b4', '#e31a1c', '#a6cee3', '#fdbf6f',  '#FF6700','#003366', '#ccc9c0', '#0f0f0f']);
 
     // Axis
     const axisLeft = d3.axisRight(scaleLeft);
@@ -153,7 +164,7 @@ export default class HorizontalBarChart extends Component {
       .append("rect")
       .attr("y", (d,i) => margin / 2 +  scaleLeft(departmentSum[i].name))
       .attr("x", margin * 2)
-      .style("fill", (d,i) =>  { return colorScale(i); })
+      .style("fill", (d,i) =>  { return colorScale(d.name); })
       .attr("width", (d,i) => scaleTop(departmentSum[i].value) - margin)
       .attr("height", 10);
     

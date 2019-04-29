@@ -105,19 +105,20 @@ export default class Map extends Component {
     const projection = d3.geoMercator().fitSize([800, 800], this.props.geodata);
     const data = (years !== undefined) ? years : this.props.data;
     const amountAllocated = this.state.showChange ? this.districtChanged(data) : this.districtAllocated(data);
-
+    
     const min_max = d3.extent(amountAllocated,
-                              d => (d !== undefined && d.name !== "Citywide") ?
-                              d.value : 0);
-
-    /* Show raw amount rather than change */
+      d => (d !== undefined && d.name !== "Citywide") ?
+      d.value : 0);
+    
     if (!this.state.showChange) {
       min_max[0] = 0;
     } else {
       min_max.splice(1, 0, 0);
     }
 
-    let colors = this.state.showChange ? ["hotpink", "white", "teal"] : ["white", "blue"];
+  
+    let colors = this.state.showChange ? ["#ca0020", "#f7f7f7", "#0571b0"] : ["#eff3ff", "#08519c"];
+
     const colorScale =
           d3.scaleLinear().domain(min_max)
           .range(colors);
@@ -242,37 +243,6 @@ export default class Map extends Component {
     d3.selectAll("#osm-map path").remove();
   }
 
-  colorScale(g, min_max) {
-    const heightScale = d3.scaleLinear().domain([0, 800]).range(["blue", "white"]);
-    const heightArr = [100, 160, 220, 280, 340, 400, 460, 520, 580, 640];
-    // Color Scale
-    g.append('g').selectAll("rect")
-      .data(heightArr)
-      .enter().append("rect")
-      .attr("x", 820)
-      .attr("y", function(d,i) { return d })
-      .attr("width", 50)
-      .attr("height", 60)
-      .attr("fill", function(d,i) {
-        return heightScale(d);
-      });
-
-    const scaleFormatter = d3.format(".2s")
-
-    g.append("text")
-      .text(scaleFormatter(min_max[1]))
-      .attr("fill", "white")
-      .attr("x", 820)
-      .attr("y", 90);
-
-    g.append("text")
-      .text(scaleFormatter(0))
-      .attr("fill", "white")
-      .attr("x", 830)
-      .attr("y", 730);
-
-  }
-
   districtAllocated(data) {
     // TODO: Redo district amount.
     let districtAmount = [
@@ -378,7 +348,7 @@ export default class Map extends Component {
     return (
       <div className="Map">
 	<div id="osm-map"></div>
-        <Timeline data={this.props.data} yearSelector={this.props.yearSelector}/>
+        <Timeline data={this.props.data} yearSelector={this.props.yearSelector} selectedYears={this.props.years}/>
         <div className="container-fluid hud-ui">
           <div className="row">
             <div className="col-3">
@@ -403,10 +373,10 @@ export default class Map extends Component {
             </div>
             <div className="col-3">
               <div className="card">
-                <Legend name="legend" data={this.props.data} />
+                <Legend name="legend" data={this.props.data} years={this.props.years} changed={this.state.showChange}/>
               </div>
               <div className="card">
-                <HorizontalBarChart name="barChart" width="400" height="400" data={this.props.data} years={this.props.years}  />
+                <HorizontalBarChart name="barChart" width="400" height="400" data={this.props.data} years={this.props.years} district={this.state.portion !== undefined ? this.state.portion.properties.district : undefined} />
               </div>
             </div>
           </div>

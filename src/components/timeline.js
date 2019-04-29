@@ -13,8 +13,9 @@ export default class Timeline extends Component {
   }
 
   componentDidUpdate() {
-    if (this.props.yearSelector.length === 0) {
-
+    if (this.props.selectedYears.length === 0) {
+      this.removeTimeline();
+      this.timelineScale();
     }
   }
 
@@ -33,6 +34,11 @@ export default class Timeline extends Component {
     return timeLine;
   }
 
+  removeTimeline() {
+    const svg = d3.select(".Timeline svg");
+    svg.selectAll("g").remove();
+  }
+
   timelineScale() {
     const that = this;
     const timeScale = d3.scaleLinear().domain([2004,2019]).range([0, 600]);
@@ -48,8 +54,8 @@ export default class Timeline extends Component {
 
     const axis = d3.axisBottom().scale(timeScale).tickFormat(d3.format("d"));
     const svg = d3.select(".Timeline svg");
-    const new_g = svg.append("g").attr("transform", "translate(170,0)");
-
+    const new_g = svg.append("g").attr("transform", "translate(155,0)");
+    
     new_g.append("g").attr("transform", "translate(0, 90)").call(axis);
     new_g.selectAll('rect')
       .data(timeData)
