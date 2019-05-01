@@ -105,18 +105,18 @@ export default class Map extends Component {
     const projection = d3.geoMercator().fitSize([800, 800], this.props.geodata);
     const data = (years !== undefined) ? years : this.props.data;
     const amountAllocated = this.state.showChange ? this.districtChanged(data) : this.districtAllocated(data);
-    
+
     const min_max = d3.extent(amountAllocated,
       d => (d !== undefined && d.name !== "Citywide") ?
       d.value : 0);
-    
+
     if (!this.state.showChange) {
       min_max[0] = 0;
     } else {
       min_max.splice(1, 0, 0);
     }
 
-  
+
     let colors = this.state.showChange ? ["#ca0020", "#f7f7f7", "#0571b0"] : ["#eff3ff", "#08519c"];
 
     const colorScale =
@@ -148,11 +148,6 @@ export default class Map extends Component {
           d3.select("body").on("keydown", null);
         }
       });
-
-      let bds = this.getBoundingClientRect();
-      let origin = that.osmMap.getPixelOrigin();
-      let zoomcenter = that.osmMap.layerPointToLatLng([bds.x + bds.width / 2, bds.y + bds.height / 2]);
-      that.osmMap.flyTo(zoomcenter, DISTZOOM, {duration: FLYDURATION});
     })
       .attr('fill', function (d, i) {
         let amt = amountAllocated[i];
@@ -246,7 +241,7 @@ export default class Map extends Component {
       .html((d, i) => d.title)
       .on("click", selectPoint);
 
-    g.selectAll('.map-point, .ping-marker').remove();
+    d3.selectAll('.map-point, .ping-marker').remove();
 
     g.selectAll('circle')
       .data(districtPoints)
