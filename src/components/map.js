@@ -182,14 +182,10 @@ export default class Map extends Component {
           .style("border-left-color", function(d, i) {
             return improvementsScale(d.service);
           });
-
       } else {
         let d = pts[0];
-        infobox.html("<span>" +
-                     "<span class=\"infobox-amount\">" + formatter.format(d.amount) + "</span>" +
-                     "<span class=\"infobox-dept\">"+ d.department + "</span>" +
-                     "<div style=\"clear: both;\"></div>" +
-                     "</span>" +
+        infobox.html("<div class=\"infobox-dept\" style=\"border-top-color: " + improvementsScale(d.service) + "\">"+ d.department + "</div>" +
+                     "<div class=\"infobox-amount\">" + formatter.format(d.amount) + "</div>" +
                      "<h2>" + d.title + " (" + d.year + ")</h2>" +
                      "<p>" + d.description + "</p>");
       }
@@ -201,7 +197,7 @@ export default class Map extends Component {
        * from the list. */
       const ping_pos = osmMap.latLngToLayerPoint({lat: d.latitude, lon: d.longitude});
       const ping_duration = "1.5s";
-      const radius = 80;
+      const radius = 100;
       const begin = "0s";
 
       d3.selectAll(".ping-marker").remove();
@@ -287,6 +283,9 @@ export default class Map extends Component {
           return improvementsScale(d.service);
         })
         .on("click", selectPoint(true));
+
+    this.osmMap.flyTo(this.osmMap.layerPointToLatLng([d3.event.pageX, d3.event.pageY]),
+                      DISTZOOM, {duration: FLYDURATION});
 
     this.updatePointPositions();
   }

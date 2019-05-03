@@ -188,11 +188,8 @@ div .cholorpleth {
 }
 
 .infobox-dept {
-    float: left;
-}
-
-.infobox-amount {
-    float: right;
+    border-top-style: solid;
+    border-top-width: 4px;
 }
 
 .hud-ui {
