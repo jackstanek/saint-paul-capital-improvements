@@ -166,12 +166,18 @@ div .cholorpleth {
 }
 
 .infobox ul li:nth-child(odd) {
-    background-color: powderblue;
+    background-color: lightgrey;
 }
 
 .infobox ul li {
     padding: 5px;
     cursor: pointer;
+    border-left: none grey;
+    transition: border 0.25s, background 0.25s;
+}
+
+.infobox ul li:hover {
+    border-left: 1rem solid grey;
 }
 
 .infobox h2 {
@@ -180,12 +186,15 @@ div .cholorpleth {
     font-size: 1.5em;
 }
 
-.infobox .infobox-amount, .infobox .infobox-dept {
-    display: inline;
+.infobox-amount, .infobox-dept {
     font-size: 0.75em;
 }
 
-.infobox .infobox-amount {
+.infobox-dept {
+    float: left;
+}
+
+.infobox-amount {
     float: right;
 }
 

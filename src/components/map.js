@@ -171,26 +171,27 @@ export default class Map extends Component {
       currency: 'USD',
     });
 
+    let infobox = d3.select(".infobox");
     const populateInfobox = (infobox, pts) => {
       infobox.html("").classed("infobox-hidden", false);
       if (pts.length > 1) {
         const infobox = d3.select(".infobox");
         infobox.append('h2').html(portion !== undefined ? portion.properties.name2 : "");
         infobox.append('ul').selectAll('li')
-          .data(pts)
+          .data(pts.sort((f, s) => f.year < s.year))
           .enter().append('li')
-          .html((d, i) => d.title)
+          .html((d, i) => d.title + " ("+ d.year + ")")
           .on("click", selectPoint());
 
       } else {
         let d = pts[0];
-        infobox.html("<span class=\"infobox-amount\">" + formatter.format(d.amount) + "</span>" +
+        infobox.html("<span>" +
+                     "<span class=\"infobox-amount\">" + formatter.format(d.amount) + "</span>" +
                      "<span class=\"infobox-dept\">"+ d.department + "</span>" +
-                     "<h2>" + d.title + "</h2>" +
-                     "<p> District: " + d.district + "</p>" +
-                     "<p> Year: " + d.year + "</p>" +
-                     "<p> Location: " + d.location + "</p>" +
-                     "<p> Description: " + d.description + "</p>");
+                     "<div style=\"clear: both;\"></div>" +
+                     "</span>" +
+                     "<h2>" + d.title + " (" + d.year + ")</h2>" +
+                     "<p>" + d.description + "</p>");
       }
     };
 
@@ -232,7 +233,7 @@ export default class Map extends Component {
         .attr("dur", ping_duration)
         .attr("repeatCount", "indefinite")
         .attr("values", "1; 0");
-    }
+    };
 
     const selectPoint = circle => function (d, i) {
       const dist_between = (l, r) => {
@@ -245,23 +246,27 @@ export default class Map extends Component {
         return Math.sqrt((lp.x - rp.x) ** 2 + (lp.y - rp.y) ** 2);
       };
 
+      d3.selectAll(".ping-marker").remove();
       let clicked_node = this;
 
       /* If I was to do this for real, I would use a proper spatial
        * data structure instead of a functional for loop. */
-      let infobox = d3.select(".infobox");
       if (circle) {
         let covered_points = d3.selectAll('.map-point').filter(function() {
           return (dist_between(clicked_node, this) < 21);
         });
 
         populateInfobox(infobox, covered_points.data());
+        if (covered_points.size() <= 1) {
+          create_ping(d, i);
+        }
       } else {
-        populateInfobox(infobox, [d])
+        populateInfobox(infobox, [d]);
+        create_ping(d, i);
       }
+
       osmMap.flyTo([d.latitude, d.longitude], MAXZOOM,
                    {animate: true, duration: FLYDURATION});
-      create_ping(d, i);
     };
 
     const years = this.parseYearData(year);
@@ -272,6 +277,7 @@ export default class Map extends Component {
 
     d3.selectAll('.map-point, .ping-marker').remove();
 
+    populateInfobox(infobox, districtPoints);
     let pts = g.selectAll('circle')
         .data(districtPoints)
         .enter().append('circle')
@@ -281,6 +287,7 @@ export default class Map extends Component {
           return improvementsScale(d.service);
         })
         .on("click", selectPoint(true));
+
     this.updatePointPositions();
   }
 
