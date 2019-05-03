@@ -200,7 +200,7 @@ export default class Map extends Component {
       /* TODO: this should only work if selected through the map, not
        * from the list. */
       const ping_pos = osmMap.latLngToLayerPoint({lat: d.latitude, lon: d.longitude});
-      const ping_duration = "1s";
+      const ping_duration = "1.5s";
       const radius = 80;
       const begin = "0s";
 
