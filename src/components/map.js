@@ -12,7 +12,6 @@ const DISTZOOM = MINZOOM + 1;
 const MAXZOOM = DISTZOOM + 1;
 const STARTLOC = [44.94, -93.10];
 const FLYDURATION = 0.6;
-const NUMDISTRICTS = 17;
 
 export default class Map extends Component {
   constructor(props) {
@@ -172,6 +171,29 @@ export default class Map extends Component {
       currency: 'USD',
     });
 
+    const populateInfobox = (infobox, pts) => {
+      infobox.html("").classed("infobox-hidden", false);
+      if (pts.length > 1) {
+        const infobox = d3.select(".infobox");
+        infobox.append('h2').html(portion !== undefined ? portion.properties.name2 : "");
+        infobox.append('ul').selectAll('li')
+          .data(pts)
+          .enter().append('li')
+          .html((d, i) => d.title)
+          .on("click", selectPoint());
+
+      } else {
+        let d = pts[0];
+        infobox.html("<span class=\"infobox-amount\">" + formatter.format(d.amount) + "</span>" +
+                     "<span class=\"infobox-dept\">"+ d.department + "</span>" +
+                     "<h2>" + d.title + "</h2>" +
+                     "<p> District: " + d.district + "</p>" +
+                     "<p> Year: " + d.year + "</p>" +
+                     "<p> Location: " + d.location + "</p>" +
+                     "<p> Description: " + d.description + "</p>");
+      }
+    };
+
     let osmMap = this.osmMap;
     const create_ping = function(d, i) {
       /* TODO: this should only work if selected through the map, not
@@ -212,15 +234,31 @@ export default class Map extends Component {
         .attr("values", "1; 0");
     }
 
-    const selectPoint = function (d, i) {
-      infobox.html("<span class=\"infobox-amount\">" + formatter.format(d.amount) + "</span>" +
-                   "<span class=\"infobox-dept\">"+ d.department + "</span>" +
-                   "<h2>" + d.title + "</h2>" +
-                   "<p> District: " + d.district + "</p>" +
-                   "<p> Year: " + d.year + "</p>" +
-                   "<p> Location: " + d.location + "</p>" +
-                   "<p> Description: " + d.description + "</p>")
-        .classed("infobox-hidden", false);
+    const selectPoint = circle => function (d, i) {
+      const dist_between = (l, r) => {
+        const compute_pos = n => {
+          let b = n.getBoundingClientRect();
+          return {x: b.left, y: b.top};
+        };
+
+        let lp = compute_pos(l), rp = compute_pos(r);
+        return Math.sqrt((lp.x - rp.x) ** 2 + (lp.y - rp.y) ** 2);
+      };
+
+      let clicked_node = this;
+
+      /* If I was to do this for real, I would use a proper spatial
+       * data structure instead of a functional for loop. */
+      let infobox = d3.select(".infobox");
+      if (circle) {
+        let covered_points = d3.selectAll('.map-point').filter(function() {
+          return (dist_between(clicked_node, this) < 21);
+        });
+
+        populateInfobox(infobox, covered_points.data());
+      } else {
+        populateInfobox(infobox, [d])
+      }
       osmMap.flyTo([d.latitude, d.longitude], MAXZOOM,
                    {animate: true, duration: FLYDURATION});
       create_ping(d, i);
@@ -232,26 +270,17 @@ export default class Map extends Component {
     const map = d3.select("#osm-map");
     let g = map.select('g');
 
-    const infobox = d3.select(".infobox");
-    infobox.html("").classed('infobox-hidden', false);
-    infobox.append('h2').html(portion !== undefined ? portion.properties.name2 : "");
-    infobox.append('ul').selectAll('li')
-      .data(districtPoints)
-      .enter().append('li')
-      .html((d, i) => d.title)
-      .on("click", selectPoint);
-
     d3.selectAll('.map-point, .ping-marker').remove();
 
-    g.selectAll('circle')
-      .data(districtPoints)
-      .enter().append('circle')
-      .classed("map-point", true)
-      .attr("r", 7.5)
-      .attr("fill", function(d,i) {
-        return improvementsScale(d.service);
-      })
-      .on("click", selectPoint);
+    let pts = g.selectAll('circle')
+        .data(districtPoints)
+        .enter().append('circle')
+        .classed("map-point", true)
+        .attr("r", 7.5)
+        .attr("fill", function(d,i) {
+          return improvementsScale(d.service);
+        })
+        .on("click", selectPoint(true));
     this.updatePointPositions();
   }
 
