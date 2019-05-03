@@ -149,7 +149,7 @@ div .cholorpleth {
     overflow-y: auto;
     box-sizing: content-box;
     visibility: visible;
-    transition: opacity 500ms, height 500ms, visibility 500ms;
+    transition: opacity 500ms, height 500ms, width 500ms, visibility 500ms;
     pointer-events: auto;
     box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
@@ -158,6 +158,7 @@ div .cholorpleth {
     opacity: 0;
     visibility: hidden;
     height: 0;
+    width: 0;
 }
 
 .infobox ul {
@@ -173,7 +174,7 @@ div .cholorpleth {
 }
 
 .infobox ul li:hover {
-    border-left-width: 10px;
+    border-left-width: 8px;
 }
 
 .infobox h2 {
