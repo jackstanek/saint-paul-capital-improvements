@@ -165,19 +165,15 @@ div .cholorpleth {
     padding: 0;
 }
 
-.infobox ul li:nth-child(odd) {
-    background-color: lightgrey;
-}
-
 .infobox ul li {
     padding: 5px;
     cursor: pointer;
-    border-left: none grey;
+    border-left-style: solid;
     transition: border 0.25s, background 0.25s;
 }
 
 .infobox ul li:hover {
-    border-left: 1rem solid grey;
+    border-left-width: 10px;
 }
 
 .infobox h2 {

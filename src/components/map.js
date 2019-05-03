@@ -33,8 +33,7 @@ export default class Map extends Component {
   // Type check for data types passed into map.js then create map if correct.
   componentDidMount() {
     let osmMap =
-        L.map("osm-map",
-              {
+        L.map("osm-map", {
                 //dragging: false,
                 zoomControl: false,
                 boxZoom: false,
@@ -51,9 +50,7 @@ export default class Map extends Component {
       maxZoom: MAXZOOM
     }).addTo(osmMap);
 
-    let that = this;
-    let zoom_handler = function() { that.updatePointPositions(); };
-    //osmMap.on("viewreset", zoom_handler);
+    let zoom_handler = function() { this.updatePointPositions(); }.bind(this);
     osmMap.on("zoomend", zoom_handler);
     this.osmMap = osmMap;
 
@@ -181,7 +178,10 @@ export default class Map extends Component {
           .data(pts.sort((f, s) => f.year < s.year))
           .enter().append('li')
           .html((d, i) => d.title + " ("+ d.year + ")")
-          .on("click", selectPoint());
+          .on("click", selectPoint())
+          .style("border-left-color", function(d, i) {
+            return improvementsScale(d.service);
+          });
 
       } else {
         let d = pts[0];
