@@ -53,6 +53,7 @@ export default class Map extends Component {
     this.osmMap = osmMap;
 
     this.createMap();
+    osmMap.invalidateSize();
   }
 
   componentDidUpdate(prevProps, prevState) {
