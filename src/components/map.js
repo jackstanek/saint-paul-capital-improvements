@@ -32,16 +32,14 @@ export default class Map extends Component {
 
   // Type check for data types passed into map.js then create map if correct.
   componentDidMount() {
-    let osmMap =
-        L.map("osm-map", {
-                //dragging: false,
-                zoomControl: false,
-                boxZoom: false,
-                doubleClickZoom: false,
-                //scrollWheelZoom: false,
-                zoomDelta: 0
-              })
-        .setView(STARTLOC, 13);
+    let osmMap = L.map("osm-map", {
+      //dragging: false,
+      zoomControl: false,
+      boxZoom: false,
+      doubleClickZoom: false,
+      //scrollWheelZoom: false,
+      zoomDelta: 0
+    }).setView(STARTLOC, 13);
 
     /* TODO: Don't use OSM's tile server. It is not intended for this. */
     L.tileLayer('https://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -74,9 +72,10 @@ export default class Map extends Component {
 
   createMap(years) {
     L.geoJSON(this.props.geodata.features, {
-      style: (feature) => {
-        return {fillOpacity: 1}
-      }
+      style: feature => ({fillOpacity: 1}),
+      onEachFeature: function(feature, layer) {
+        feature.properties.bounds_calculated = layer.getBounds();
+      }.bind(this)
     }).addTo(this.osmMap);
 
     d3.select("#osm-map").selectAll("path")
@@ -111,7 +110,6 @@ export default class Map extends Component {
     } else {
       min_max.splice(1, 0, 0);
     }
-
 
     let colors = this.state.showChange ? ["#ca0020", "#f7f7f7", "#0571b0"] : ["#eff3ff", "#08519c"];
 
@@ -284,9 +282,8 @@ export default class Map extends Component {
         })
         .on("click", selectPoint(true));
 
-    this.osmMap.flyTo(this.osmMap.layerPointToLatLng([d3.event.pageX, d3.event.pageY]),
-                      DISTZOOM, {duration: FLYDURATION});
-
+    this.osmMap.fitBounds(portion.properties.bounds_calculated,
+                          {maxZoom: DISTZOOM});
     this.updatePointPositions();
   }
 
