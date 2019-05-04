@@ -138,7 +138,7 @@ export default class Map extends Component {
             .classed("infobox-hidden", true);
           that.unSelectMap();
           that.setState({ portion: undefined, projection:undefined});
-          that.clearYearSelection();
+          //that.clearYearSelection();
           d3.select("body").on("keydown", null);
         }
       });
@@ -157,6 +157,7 @@ export default class Map extends Component {
 
   // Set other paths to lower opacity.
   selectMap(portion, projection, year) {
+    let that = this;
     const improvementsScale = d3.scaleOrdinal()
           .domain(['Community Facilities', 'Internal Service', 'Streets and Utilities', 'Residential and Economic Development'])
           .range(['#a6cee3', '#1f78b4', '#b2df8a', '#33a02c']);
@@ -185,7 +186,13 @@ export default class Map extends Component {
         infobox.html("<div class=\"infobox-dept\" style=\"border-top-color: " + improvementsScale(d.service) + "\">"+ d.department + "</div>" +
                      "<div class=\"infobox-amount\">" + formatter.format(d.amount) + "</div>" +
                      "<h2>" + d.title + " (" + d.year + ")</h2>" +
-                     "<p>" + d.description + "</p>");
+                     "<p>" + d.description + "</p>")
+          .append("button")
+          .html("back to district")
+          .classed("return-button", true)
+          .on("click", function(d, i) {
+            that.selectMap(portion, projection, year);
+          });
       }
     };
 

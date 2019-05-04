@@ -37,9 +37,9 @@ svg {
 
 button {
     pointer-events: auto;
-    background-color: #3f3f3f;
+    background-color: white;
     border-color: #3f3f3f;
-    color: white;
+    color: black;
     padding: 10px;
     font-size: 12px;
     transition: color 0.5s, background-color 0.25s;
@@ -51,8 +51,8 @@ button:hover {
     color: white;
 }
 
-button:active {
-
+.return-button {
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
 
 .Timeline {
@@ -144,12 +144,12 @@ div .cholorpleth {
     border-color: #262626;
     color: rgb(0, 0, 0);
     width: 100%;
-    height: calc(100vh - 200px);
-    padding: 15px;
+    height: 60vh;
+    padding: 20px;
     overflow-y: auto;
     box-sizing: content-box;
     visibility: visible;
-    transition: opacity 500ms, height 500ms, width 500ms, visibility 500ms;
+    transition: opacity 0.5s, height 0.5s, visibility 0.5s, transform 0.25s;
     pointer-events: auto;
     box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
@@ -159,6 +159,7 @@ div .cholorpleth {
     visibility: hidden;
     height: 0;
     width: 0;
+    transform: translateX(-300px);
 }
 
 .infobox ul {
