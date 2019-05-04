@@ -148,6 +148,7 @@ export default class Map extends Component {
         let amt = amountAllocated[i];
         return colorScale(amt !== undefined ? amt.value : 0);
       });
+    this.osmMap.invalidateSize();
   }
 
   unSelectMap() {
@@ -293,6 +294,7 @@ export default class Map extends Component {
     this.osmMap.fitBounds(portion.properties.bounds_calculated,
                           {maxZoom: DISTZOOM});
     this.updatePointPositions();
+    this.osmMap.invalidateSize();
   }
 
   destroyMap() {
