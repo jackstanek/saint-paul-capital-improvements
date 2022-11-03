@@ -185,6 +185,9 @@ export default class Map extends Component {
           });
       } else {
         let d = pts[0];
+        if (d === undefined) {
+          return
+        }
         infobox.html("<div class=\"infobox-dept\" style=\"border-top-color: " + improvementsScale(d.service) + "\">"+ d.department + "</div>" +
                      "<div class=\"infobox-amount\">" + formatter.format(d.amount) + "</div>" +
                      "<h2>" + d.title + " (" + d.year + ")</h2>" +

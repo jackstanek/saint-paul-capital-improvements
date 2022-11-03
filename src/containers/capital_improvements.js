@@ -32,7 +32,7 @@ export default class CapitalImprovement extends Component {
       });
     });
 
-    d3.json("https://information.stpaul.gov/api/geospatial/dq4n-yj8b?method=export&format=GeoJSON").then(function(data) {
+    d3.json(process.env.PUBLIC_URL + "/stpaul_neighborhoods.geojson").then(function(data) {
       that.setState({
         district_map: data
       });
