@@ -73,10 +73,10 @@ export default class Map extends Component {
 
   createMap(years) {
     L.geoJSON(this.props.geodata.features, {
-      style: feature => ({fillOpacity: 1}),
+      style: _ => ({fillOpacity: 1}),
       onEachFeature: function(feature, layer) {
         feature.properties.bounds_calculated = layer.getBounds();
-      }.bind(this)
+      }
     }).addTo(this.osmMap);
 
     d3.select("#osm-map").selectAll("path")
@@ -284,12 +284,12 @@ export default class Map extends Component {
     d3.selectAll('.map-point, .ping-marker').remove();
 
     populateInfobox(infobox, districtPoints);
-    let pts = g.selectAll('circle')
+    g.selectAll('circle')
         .data(districtPoints)
         .enter().append('circle')
         .classed("map-point", true)
         .attr("r", 7.5)
-        .attr("fill", function(d,i) {
+        .attr("fill", function(d,_) {
           return improvementsScale(d.service);
         })
         .on("click", selectPoint(true));

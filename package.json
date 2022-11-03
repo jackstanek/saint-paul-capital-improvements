@@ -10,7 +10,10 @@
     "react-scripts": "2.1.8",
     "regression": "^2.0.1"
   },
+  "homepage": "https://jackstanek.github.io/saint-paul-capital-improvements/",
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts --openssl-legacy-provider start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -24,5 +27,8 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "devDependencies": {
+    "gh-pages": "^4.0.0"
+  }
 }
