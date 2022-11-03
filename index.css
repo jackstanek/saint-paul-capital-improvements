@@ -1,0 +1,227 @@
+body {
+    background-color: #ffffff;
+    font-family: 'Lato', sans-serif;
+    text-align: center;
+    color: black;
+}
+
+text {
+    font-weight: bold;
+    font-size: 24px;
+}
+
+h2 {
+    display: inline;
+    margin: 5px;
+}
+
+h1.app-title {
+    padding: 10px;
+}
+
+svg {
+    display: block;
+    margin: 0 auto;
+}
+
+.b {
+    font-weight: bold;
+}
+
+.hud-ui {
+    padding: 20px;
+    z-index: 100;
+    width: 100vw;
+    height: 100vh;
+}
+
+button {
+    pointer-events: auto;
+    background-color: white;
+    border-color: #3f3f3f;
+    color: black;
+    padding: 10px;
+    font-size: 12px;
+    transition: color 0.5s, background-color 0.25s;
+    width: 100%;
+}
+
+button:hover {
+    background-color: #3f3f3f;
+    color: white;
+}
+
+.return-button {
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}
+
+.Timeline {
+    position: fixed;
+    bottom: 10px;
+    height: 125px;
+    width: 100%;
+}
+
+.Timeline svg {
+    display: inline;
+    background-color: #f8f9fa;
+    stroke-opacity: 0.5;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    bottom: 10px;
+    margin: 20px;
+    padding: 10px;
+    height: 125px;
+}
+
+.card {
+    margin: 25px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    background-color: #f8f9fa;
+}
+
+button {
+    color: black;
+}
+
+.Map {
+    position: fixed;
+    margin: 0 auto;
+    z-index: 0;
+}
+
+.Map > svg {
+    height: 100vh;
+}
+
+#osm-map {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    z-index: 0;
+}
+
+.map-point {
+    cursor: pointer;
+    stroke-width: 1;
+    stroke: #0f0f0f;
+    transition: stroke-width 200ms;
+    pointer-events: auto;
+}
+
+.map-point:hover {
+    stroke-width: 2;
+}
+
+.map-selected {
+    stroke-width: 4;
+}
+
+.map-piece {
+    cursor: pointer;
+    paint-order: stroke fill;
+    stroke-width: 3;
+    stroke: #0f0f0f;
+    fill-opacity: 0.7;
+    transition: fill 0.5s;
+}
+
+.map-piece:hover {
+    fill-opacity: 0.8;
+}
+
+
+div .cholorpleth {
+    margin: 0 auto;
+}
+
+.small text{
+    font-size: 10px;
+}
+
+.infobox {
+    text-align: left;
+    background: rgb(255, 255, 255);
+    border-color: #262626;
+    color: rgb(0, 0, 0);
+    width: 100%;
+    height: 60vh;
+    padding: 20px;
+    overflow-y: auto;
+    box-sizing: content-box;
+    visibility: visible;
+    transition: opacity 0.5s, height 0.5s, visibility 0.5s, transform 0.25s;
+    pointer-events: auto;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}
+
+.infobox-hidden {
+    opacity: 0;
+    visibility: hidden;
+    height: 0;
+    width: 0;
+    transform: translateX(-300px);
+}
+
+.infobox ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.infobox ul li {
+    padding: 5px;
+    cursor: pointer;
+    border-left-style: solid;
+    transition: border 0.25s, background 0.25s;
+}
+
+.infobox ul li:hover {
+    border-left-width: 8px;
+}
+
+.infobox h2 {
+    margin-left: 0;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+}
+
+.infobox-amount, .infobox-dept {
+    font-size: 0.75em;
+}
+
+.infobox-dept {
+    border-top-style: solid;
+    border-top-width: 4px;
+}
+
+.hud-ui {
+    pointer-events: none;
+}
+
+.map-text {
+    cursor: pointer;
+    font-size: 12px;
+    user-select: none;
+}
+
+.legend-point {
+    cursor: pointer;
+    stroke-width: 0.5;
+    stroke: #0f0f0f;
+}
+
+.legend-text {
+    cursor: pointer;
+    font-size: 8px;
+    user-select: none;
+}
+
+.loading {
+    color: white;
+    font-size: 24px;
+    text-align: center;
+}
+
+.tooltip p {
+    text-align: left;
+    margin: 0px;
+}
